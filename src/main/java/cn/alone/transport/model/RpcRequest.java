@@ -1,6 +1,7 @@
 package cn.alone.transport.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Created by rojeralone on 2018-07-25
@@ -57,4 +58,16 @@ public class RpcRequest implements Serializable {
         this.params = params;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "RpcRequest{" +
+                "rid='" + rid + '\'' +
+                ", className='" + className + '\'' +
+                ", methodName='" + methodName + '\'' +
+                ", paramTypes=" + Arrays.toString(paramTypes) +
+                ", params=" + Arrays.toString(params) +
+                '}';
+    }
+
 }
