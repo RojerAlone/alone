@@ -8,11 +8,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by rojeralone on 2018-07-25
  */
 public class AloneServer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AloneServer.class);
 
     private static final int DEFAULT_SERVER_PORT = 19981;
 
@@ -22,7 +26,7 @@ public class AloneServer {
 
     public void start(int port) {
         if (port <= 1024) {
-            System.out.println("invalid server port");
+            LOGGER.error("invalid server port");
             System.exit(-1);
         }
         EventLoopGroup bossGroup = new NioEventLoopGroup();
