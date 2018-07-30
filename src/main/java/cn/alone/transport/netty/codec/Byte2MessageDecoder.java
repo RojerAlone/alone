@@ -1,5 +1,6 @@
 package cn.alone.transport.netty.codec;
 
+import cn.alone.transport.util.SerializationUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -17,6 +18,6 @@ public class Byte2MessageDecoder extends ByteToMessageDecoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(Byte2MessageDecoder.class);
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-
+        out.add(SerializationUtil.deserialization(in.array()));
     }
 }
