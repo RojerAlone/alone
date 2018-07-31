@@ -13,9 +13,9 @@ import java.util.List;
  * @author RojerAlone
  * @Date 2018-07-29 16:09
  */
-public class Byte2MessageDecoder extends ByteToMessageDecoder {
+public class RequestDecoder extends ByteToMessageDecoder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Byte2MessageDecoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestDecoder.class);
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         out.add(SerializationUtil.deserialization(in.array()));
