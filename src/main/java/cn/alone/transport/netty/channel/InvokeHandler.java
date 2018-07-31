@@ -13,6 +13,11 @@ public class InvokeHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         // invoke method depend on registry center and request info
         RpcRequest rpcRequest = (RpcRequest) msg;
+        if (rpcRequest.isAsync()) {
+            // do async invoke
+        } else {
+            // do sync invoke
+        }
         super.channelRead(ctx, msg);
     }
 }

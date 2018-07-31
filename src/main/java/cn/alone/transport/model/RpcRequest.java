@@ -13,6 +13,7 @@ public class RpcRequest implements Serializable {
     private String methodName;
     private Class<?>[] paramTypes;
     private Object[] params;
+    private boolean async;
 
     public String getRid() {
         return rid;
@@ -59,6 +60,15 @@ public class RpcRequest implements Serializable {
         return this;
     }
 
+    public boolean isAsync() {
+        return async;
+    }
+
+    public RpcRequest setAsync(boolean async) {
+        this.async = async;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "RpcRequest{" +
@@ -67,7 +77,7 @@ public class RpcRequest implements Serializable {
                 ", methodName='" + methodName + '\'' +
                 ", paramTypes=" + Arrays.toString(paramTypes) +
                 ", params=" + Arrays.toString(params) +
+                ", async=" + async +
                 '}';
     }
-
 }
