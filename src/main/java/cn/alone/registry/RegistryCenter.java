@@ -12,7 +12,7 @@ public class RegistryCenter {
 
     private static final Map<String, Object> registryService = new ConcurrentHashMap<String, Object>();
 
-    public Object getService(RpcRequest rpcRequest) {
+    public static Object getService(RpcRequest rpcRequest) {
         String registryName = rpcRequest.getClassName() + "." + rpcRequest.getMethodName();
         return registryService.get(registryName);
     }

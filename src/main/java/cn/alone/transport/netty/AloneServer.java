@@ -1,8 +1,8 @@
 package cn.alone.transport.netty;
 
 import cn.alone.transport.netty.channel.InvokeHandler;
-import cn.alone.transport.netty.codec.RequestDecoder;
-import cn.alone.transport.netty.codec.ResponseEncoder;
+import cn.alone.transport.netty.codec.AloneDecoder;
+import cn.alone.transport.netty.codec.AloneEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -41,8 +41,8 @@ public class AloneServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast("requestDecoder", new RequestDecoder());
-                            ch.pipeline().addLast("responseEncoder", new ResponseEncoder());
+                            ch.pipeline().addLast("requestDecoder", new AloneDecoder(true));
+                            ch.pipeline().addLast("responseEncoder", new AloneEncoder(false));
                             ch.pipeline().addLast("invokeHandler", new InvokeHandler());
                         }
                     });

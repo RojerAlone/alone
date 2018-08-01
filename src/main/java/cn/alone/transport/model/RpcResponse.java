@@ -8,9 +8,11 @@ import java.io.Serializable;
 public class RpcResponse implements Serializable{
 
     private String rid;
+    private boolean success;
     private String error;
     private Class<?> responseType;
     private Object responseResult;
+    private Exception exception;
 
     public String getRid() {
         return rid;
@@ -19,6 +21,14 @@ public class RpcResponse implements Serializable{
     public RpcResponse setRid(String rid) {
         this.rid = rid;
         return this;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getError() {
@@ -41,6 +51,14 @@ public class RpcResponse implements Serializable{
 
     public Object getResponseResult() {
         return responseResult;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 
     public RpcResponse setResponseResult(Object responseResult) {

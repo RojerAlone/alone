@@ -13,20 +13,37 @@ import io.protostuff.runtime.RuntimeSchema;
  */
 public class SerializationUtil {
 
-    private static final RuntimeSchema decodeSchema = RuntimeSchema.createFrom(RpcResponse.class);
-    private static final RuntimeSchema encodeSchema = RuntimeSchema.createFrom(RpcRequest.class);
+    private static final RuntimeSchema responseSchema = RuntimeSchema.createFrom(RpcResponse.class);
+    private static final RuntimeSchema requestSchema = RuntimeSchema.createFrom(RpcRequest.class);
 
-    public static RpcResponse deserialization(byte[] data) {
+    @SuppressWarnings("unchecked")
+    public static <T> T deserialization(byte[] data, Class<T> targetClass) {
         if (data != null && data.length > 0) {
-            Object obj = decodeSchema.newMessage();
-            ProtostuffIOUtil.mergeFrom(data, obj, decodeSchema);
-            return (RpcResponse) obj;
+            RuntimeSchema schema = null;
+            if (targetClass.equals(RpcRequest.class)) {
+                schema = requestSchema;
+            } else if (targetClass.equals(RpcResponse.class)) {
+                schema = responseSchema;
+            } else {
+                throw new IllegalArgumentException("unsupport serialize class : " + targetClass.getName());
+            }
+            Object obj = schema.newMessage();
+            ProtostuffIOUtil.mergeFrom(data, obj, schema);
+            return (T) obj;
         }
         return null;
     }
 
-    public static byte[] serialization(Object obj) {
-        return ProtostuffIOUtil.toByteArray(obj, encodeSchema, LinkedBuffer.allocate());
+    public static byte[] serialization(Object obj, Class targetClass) {
+        RuntimeSchema schema = null;
+        if (targetClass.equals(RpcRequest.class)) {
+            schema = requestSchema;
+        } else if (targetClass.equals(RpcResponse.class)) {
+            schema = responseSchema;
+        } else {
+            throw new IllegalArgumentException("unsupport serialize class : " + targetClass.getName());
+        }
+        return ProtostuffIOUtil.toByteArray(obj, schema, LinkedBuffer.allocate());
     }
 
 }
