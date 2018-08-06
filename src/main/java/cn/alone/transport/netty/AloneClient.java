@@ -2,6 +2,7 @@ package cn.alone.transport.netty;
 
 import cn.alone.transport.netty.codec.AloneDecoder;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -21,6 +22,8 @@ public class AloneClient {
 
     private static final int DEFAULT_CLINET_PORT = 8864;
 
+    private Channel channel;
+
     public void init() {
         try {
             startClient();
@@ -36,6 +39,7 @@ public class AloneClient {
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel ch) throws Exception {
+                        channel = ch;
                         ch.pipeline().addLast("responseDecoder", new AloneDecoder(false));
                     }
                 });
