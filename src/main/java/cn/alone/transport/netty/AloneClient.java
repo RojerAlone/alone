@@ -1,9 +1,11 @@
 package cn.alone.transport.netty;
 
+import cn.alone.transport.netty.channel.ClientHandler;
 import cn.alone.transport.netty.codec.AloneDecoder;
+import cn.alone.transport.netty.codec.AloneEncoder;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -11,6 +13,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author RojerAlone
@@ -22,7 +26,7 @@ public class AloneClient {
 
     private static final int DEFAULT_CLINET_PORT = 8864;
 
-    private Channel channel;
+    static final ConcurrentLinkedQueue<ClientHandler> channelHandlers = new ConcurrentLinkedQueue<ClientHandler>();
 
     public void init() {
         try {
@@ -39,8 +43,11 @@ public class AloneClient {
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        channel = ch;
                         ch.pipeline().addLast("responseDecoder", new AloneDecoder(false));
+                        ch.pipeline().addLast("requestEncoder", new AloneEncoder(true));
+                        ClientHandler clientHandler = new ClientHandler();
+                        channelHandlers.add(clientHandler);
+                        ch.pipeline().addLast("clientHandler", clientHandler);
                     }
                 });
         try {
@@ -49,5 +56,17 @@ public class AloneClient {
         } finally {
             eventLoopGroup.shutdownGracefully();
         }
+    }
+
+    public static ClientHandler getHandler() {
+        ClientHandler handler;
+        while ((handler = channelHandlers.poll()) == null) {
+
+        }
+        return handler;
+    }
+
+    public static void releaseHandler(ClientHandler handler) {
+        channelHandlers.add(handler);
     }
 }

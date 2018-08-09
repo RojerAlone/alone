@@ -1,5 +1,6 @@
 package cn.alone.client;
 
+import cn.alone.transport.proxy.ClientFactory;
 import org.junit.jupiter.api.Test;
 
 /**

@@ -18,6 +18,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     private Channel channel;
 
+    private RpcResponse response;
+
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         channel = ctx.channel();
@@ -26,11 +28,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        RpcResponse response = (RpcResponse) msg;
-        ctx.writeAndFlush(response);
+        response = (RpcResponse) msg;
     }
 
-    public void call(RpcRequest request) {
+    public RpcResponse call(RpcRequest request) {
         channel.writeAndFlush(request);
+        RpcResponse rpcResponse;
+        while ((rpcResponse = response)== null) {
+
+        }
+        response = null;
+        return rpcResponse;
     }
 }

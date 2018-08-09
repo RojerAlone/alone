@@ -1,4 +1,4 @@
-package cn.alone.client;
+package cn.alone.transport.proxy;
 
 import java.lang.reflect.Proxy;
 

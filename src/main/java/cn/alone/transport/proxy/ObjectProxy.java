@@ -1,6 +1,9 @@
-package cn.alone.client;
+package cn.alone.transport.proxy;
 
 import cn.alone.transport.model.RpcRequest;
+import cn.alone.transport.model.RpcResponse;
+import cn.alone.transport.netty.AloneClient;
+import cn.alone.transport.netty.channel.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +25,10 @@ public class ObjectProxy implements InvocationHandler {
         request.setMethodName(method.getName());
         request.setParamTypes(method.getParameterTypes());
         request.setParams(args);
-        return request.toString();
+        ClientHandler handler = AloneClient.getHandler();
+        RpcResponse response = handler.call(request);
+        AloneClient.releaseHandler(handler);
+        return response;
     }
 
 }
