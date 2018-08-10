@@ -1,27 +1,24 @@
-package cn.alone.transport.netty.channel;
+package cn.alone.service;
 
 import cn.alone.registry.RegistryCenter;
 import cn.alone.transport.model.RpcRequest;
 import cn.alone.transport.model.RpcResponse;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.lang.reflect.Method;
 
 /**
- * Created by rojeralone on 2018-07-31
+ * Created by rojeralone on 2018-08-10
  */
-public class InvokeHandler extends ChannelInboundHandlerAdapter {
+public class ServiceProvider {
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        RpcRequest rpcRequest = (RpcRequest) msg;
-        RpcResponse rpcResponse = new RpcResponse().setRid(rpcRequest.getRid());
-        doInvoke(rpcRequest, rpcResponse);
-        ctx.writeAndFlush(rpcResponse);
+    public static RpcResponse request(RpcRequest request) {
+        RpcResponse response = new RpcResponse();
+        response.setRid(request.getRid());
+        doInvoke(request, response);
+        return response;
     }
 
-    private void doInvoke(final RpcRequest request, final RpcResponse response) {
+    private static void doInvoke(final RpcRequest request, final RpcResponse response) {
         // invoke method depend on registry center and request info
         Object service = RegistryCenter.getService(request);
         try {
@@ -42,4 +39,5 @@ public class InvokeHandler extends ChannelInboundHandlerAdapter {
             // do sync invoke
         }
     }
+
 }

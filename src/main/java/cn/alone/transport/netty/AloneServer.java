@@ -1,6 +1,6 @@
 package cn.alone.transport.netty;
 
-import cn.alone.transport.netty.channel.InvokeHandler;
+import cn.alone.transport.netty.channel.ServerHandler;
 import cn.alone.transport.netty.codec.AloneDecoder;
 import cn.alone.transport.netty.codec.AloneEncoder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -43,7 +43,7 @@ public class AloneServer {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast("requestDecoder", new AloneDecoder(true));
                             ch.pipeline().addLast("responseEncoder", new AloneEncoder(false));
-                            ch.pipeline().addLast("invokeHandler", new InvokeHandler());
+                            ch.pipeline().addLast("serverHandler", new ServerHandler());
                         }
                     });
             ChannelFuture future = bootstrap.bind(port).sync();

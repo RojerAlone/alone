@@ -26,7 +26,7 @@ public class AloneClient {
 
     private static final int DEFAULT_CLINET_PORT = 8864;
 
-    static final ConcurrentLinkedQueue<ClientHandler> channelHandlers = new ConcurrentLinkedQueue<ClientHandler>();
+    private static final ConcurrentLinkedQueue<ClientHandler> channelHandlers = new ConcurrentLinkedQueue<ClientHandler>();
 
     public void init() {
         try {
