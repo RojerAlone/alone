@@ -30,6 +30,8 @@ public class AloneDecoder extends ByteToMessageDecoder {
     }
 
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-            out.add(SerializationUtil.deserialization(in.array(), decodeClass));
+        byte[] bytes = new byte[in.readableBytes()];
+        in.readBytes(bytes);
+        out.add(SerializationUtil.deserialization(bytes, decodeClass));
     }
 }

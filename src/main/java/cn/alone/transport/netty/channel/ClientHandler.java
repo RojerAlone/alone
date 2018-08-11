@@ -21,20 +21,23 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     private RpcResponse response;
 
     @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        channel = ctx.channel();
-        super.channelRegistered(ctx);
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        response = (RpcResponse) msg;
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        response = (RpcResponse) msg;
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOGGER.error("client handler error", cause);
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     public RpcResponse call(RpcRequest request) {
         channel.writeAndFlush(request);
         RpcResponse rpcResponse;
-        while ((rpcResponse = response)== null) {
+        while ((rpcResponse = response) == null) {
 
         }
         response = null;

@@ -4,10 +4,7 @@ import cn.alone.transport.netty.channel.ClientHandler;
 import cn.alone.transport.netty.codec.AloneDecoder;
 import cn.alone.transport.netty.codec.AloneEncoder;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -24,9 +21,29 @@ public class AloneClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AloneClient.class);
 
-    private static final int DEFAULT_CLINET_PORT = 8864;
+    private static final int DEFAULT_SERVER_PORT = 19981;
 
-    private static final ConcurrentLinkedQueue<ClientHandler> channelHandlers = new ConcurrentLinkedQueue<ClientHandler>();
+//    private static final ConcurrentLinkedQueue<ClientHandler> channelHandlers = new ConcurrentLinkedQueue<ClientHandler>();
+    private static ClientHandler clientHandler;
+
+    private static final AloneClient self = new AloneClient();
+
+    private static Channel clientChannel;
+    private static EventLoopGroup eventLoopGroup;
+
+    static {
+        self.init();
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                if (clientChannel != null) {
+                    clientChannel.close();
+                }
+                if (eventLoopGroup != null) {
+                    eventLoopGroup.shutdownGracefully();
+                }
+            }
+        }));
+    }
 
     public void init() {
         try {
@@ -38,35 +55,35 @@ public class AloneClient {
     }
 
     private void startClient() throws InterruptedException {
-        EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+        eventLoopGroup = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
+        final ClientHandler tmpClientHandler = new ClientHandler();
+//        channelHandlers.add(clientHandler);
         bootstrap.group(eventLoopGroup).channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast("responseDecoder", new AloneDecoder(false));
                         ch.pipeline().addLast("requestEncoder", new AloneEncoder(true));
-                        ClientHandler clientHandler = new ClientHandler();
-                        channelHandlers.add(clientHandler);
-                        ch.pipeline().addLast("clientHandler", clientHandler);
+                        ch.pipeline().addLast("clientHandler", tmpClientHandler);
                     }
                 });
-        try {
-            ChannelFuture future = bootstrap.connect("127.0.0.1", DEFAULT_CLINET_PORT).sync();
-            future.channel().closeFuture().sync();
-        } finally {
-            eventLoopGroup.shutdownGracefully();
-        }
+        ChannelFuture future = bootstrap.connect("127.0.0.1", DEFAULT_SERVER_PORT).sync();
+        clientChannel = future.channel();
+        tmpClientHandler.setChannel(clientChannel);
+        clientHandler = tmpClientHandler;
+        System.out.println("client start successfully listening to port " + DEFAULT_SERVER_PORT);
     }
 
     public static ClientHandler getHandler() {
         ClientHandler handler;
-        while ((handler = channelHandlers.poll()) == null) {
-
-        }
-        return handler;
+//        while ((handler = channelHandlers.poll()) == null) {
+//
+//        }
+//        return handler;
+        return clientHandler;
     }
 
-    public static void releaseHandler(ClientHandler handler) {
-        channelHandlers.add(handler);
-    }
+//    public static void releaseHandler(ClientHandler handler) {
+//        channelHandlers.add(handler);
+//    }
 }
