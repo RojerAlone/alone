@@ -1,6 +1,6 @@
 package cn.alone.demo;
 
-import cn.alone.transport.netty.AloneServer;
+import cn.alone.transport.netty.AloneClient;
 import cn.alone.transport.proxy.ClientFactory;
 
 /**
@@ -12,6 +12,7 @@ public class HelloClient {
     public static void main(String[] args) {
         HelloService helloService = ClientFactory.getProxy(HelloService.class);
         System.out.println(helloService.sayHello());
+        AloneClient.shutdown();
     }
 
 }

@@ -25,12 +25,11 @@ public class ObjectProxy implements InvocationHandler {
         request.setMethodName(method.getName());
         request.setParamTypes(method.getParameterTypes());
         request.setParams(args);
-        ClientHandler handler = AloneClient.getHandler();
-        RpcResponse response = handler.call(request);
-//        AloneClient.releaseHandler(handler);
+        RpcResponse response = AloneClient.request(request);
         if (response.isSuccess()) {
             return response.getResponseResult();
         }
+        LOGGER.error("request failed", response.getException());
         throw response.getException();
     }
 
