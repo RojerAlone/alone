@@ -1,8 +1,9 @@
-package cn.alone.transport.netty.codec;
+package cn.alone.transport.codec;
 
 import cn.alone.transport.model.RpcRequest;
 import cn.alone.transport.model.RpcResponse;
-import cn.alone.transport.util.SerializationUtil;
+import cn.alone.transport.serialize.DefaultSerialization;
+import cn.alone.transport.serialize.Serialization;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -21,6 +22,8 @@ public class AloneDecoder extends ByteToMessageDecoder {
 
     private final Class decodeClass;
 
+    private static Serialization serializationUtil = new DefaultSerialization();
+
     public AloneDecoder(boolean isRequest) {
         if (isRequest) {
             decodeClass = RpcRequest.class;
@@ -32,6 +35,6 @@ public class AloneDecoder extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         byte[] bytes = new byte[in.readableBytes()];
         in.readBytes(bytes);
-        out.add(SerializationUtil.deserialization(bytes, decodeClass));
+        out.add(serializationUtil.deserialize(bytes, decodeClass));
     }
 }

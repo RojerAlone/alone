@@ -4,8 +4,8 @@ import cn.alone.transport.model.RpcFuture;
 import cn.alone.transport.model.RpcRequest;
 import cn.alone.transport.model.RpcResponse;
 import cn.alone.transport.netty.channel.ClientHandler;
-import cn.alone.transport.netty.codec.AloneDecoder;
-import cn.alone.transport.netty.codec.AloneEncoder;
+import cn.alone.transport.codec.AloneDecoder;
+import cn.alone.transport.codec.AloneEncoder;
 import cn.alone.transport.util.RequestHolder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -46,7 +46,7 @@ public class AloneClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ch.pipeline().addLast("responseDecoder", new AloneDecoder(false));
-                        ch.pipeline().addLast("requestEncoder", new AloneEncoder(true));
+                        ch.pipeline().addLast("requestEncoder", new AloneEncoder());
                         ch.pipeline().addLast("clientHandler", new ClientHandler());
                     }
                 });

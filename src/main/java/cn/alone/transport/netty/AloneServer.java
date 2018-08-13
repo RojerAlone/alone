@@ -3,8 +3,8 @@ package cn.alone.transport.netty;
 import cn.alone.registry.RegistryCenter;
 import cn.alone.service.ServiceProvider;
 import cn.alone.transport.netty.channel.ServerHandler;
-import cn.alone.transport.netty.codec.AloneDecoder;
-import cn.alone.transport.netty.codec.AloneEncoder;
+import cn.alone.transport.codec.AloneDecoder;
+import cn.alone.transport.codec.AloneEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -30,6 +30,14 @@ public class AloneServer {
     private static EventLoopGroup bossGroup;
     private static EventLoopGroup workGroup;
 
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                close();
+            }
+        }));
+    }
+
     public static void start(Class interfaceClass, Object serviceImpl) {
         start(interfaceClass, serviceImpl, DEFAULT_SERVER_PORT);
     }
@@ -54,7 +62,7 @@ public class AloneServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast("requestDecoder", new AloneDecoder(true));
-                            ch.pipeline().addLast("responseEncoder", new AloneEncoder(false));
+                            ch.pipeline().addLast("responseEncoder", new AloneEncoder());
                             ch.pipeline().addLast("serverHandler", new ServerHandler());
                         }
                     });
@@ -63,7 +71,7 @@ public class AloneServer {
             SERVER_STAT.set(true);
             System.out.println("server start successfully at port " + port);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("server start failed", e);
             System.exit(-1);
         }
     }
