@@ -1,6 +1,7 @@
 package cn.alone.transport.netty;
 
 import cn.alone.registry.RegistryCenter;
+import cn.alone.service.ServiceProvider;
 import cn.alone.transport.netty.channel.ServerHandler;
 import cn.alone.transport.netty.codec.AloneDecoder;
 import cn.alone.transport.netty.codec.AloneEncoder;
@@ -69,8 +70,10 @@ public class AloneServer {
 
     public static synchronized void close() {
         if (SERVER_STAT.get()) {
+            channel.close();
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
+            ServiceProvider.shutdown();
         }
     }
 
