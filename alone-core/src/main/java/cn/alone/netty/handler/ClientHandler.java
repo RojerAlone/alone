@@ -27,6 +27,18 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.info("connect to server : {}", ctx.channel().remoteAddress());
+        super.channelActive(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.info("disconnect to server : {}", ctx.channel().remoteAddress());
+        super.channelInactive(ctx);
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         LOGGER.error("client handler error", cause);
     }
